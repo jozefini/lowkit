@@ -1,0 +1,49 @@
+{
+  "name": "@codesync/react",
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "React library",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react",
+    "library"
+  ],
+  "author": "Jozefini",
+  "repository": {
+    "url": "git+https://github.com/jozefini/react.git"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./map-store": {
+      "import": "./dist/map-store/index.mjs",
+      "module": "./dist/map-store/index.js",
+      "types": "./dist/map-store/index.d.ts"
+    },
+    "./loop": {
+      "import": "./dist/loop/index.mjs",
+      "module": "./dist/loop/index.js",
+      "types": "./dist/loop/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "lint": "tsc",
+    "publish": "pnpm publish",
+    "release": "pnpm run build && pnpm publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "prettier": "^3.2.4",
+    "react": "^18.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "bugs": {
+    "url": "https://github.com/jozefini/react/issues"
+  },
+  "homepage": "https://github.com/jozefini/react#readme"
+}
