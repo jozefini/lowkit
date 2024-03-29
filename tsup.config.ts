@@ -4,7 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.tsx',
     store: 'src/store.tsx',
-    hooks: 'src/loop.tsx',
+    loop: 'src/loop.tsx',
   },
   splitting: false,
   sourcemap: true,
