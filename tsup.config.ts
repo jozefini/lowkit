@@ -2,9 +2,9 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
-    index: 'src/index.ts',
-    store: 'src/store.ts',
-    hooks: 'src/hooks.ts',
+    index: 'src/index.tsx',
+    store: 'src/store.tsx',
+    hooks: 'src/hooks.tsx',
   },
   splitting: true,
   sourcemap: true,
