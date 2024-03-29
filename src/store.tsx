@@ -40,7 +40,7 @@ export class MapStore<M, V extends boolean> {
     }
   }
   private syncMap = () => {
-    this.itemSubscribers.forEach(callbacks => {
+    this.itemSubscribers.forEach((callbacks) => {
       for (const callback of callbacks) {
         callback()
       }
