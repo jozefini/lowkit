@@ -1,5 +1,11 @@
 # @codesync/react
 
+## 2.2.7
+
+### Patch Changes
+
+- fix exported types
+
 ## 2.2.6
 
 ### Patch Changes

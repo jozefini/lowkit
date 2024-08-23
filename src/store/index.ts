@@ -6,23 +6,14 @@ import {
   useSyncExternalStore,
 } from 'react'
 
-// Store
-export type TFunction = (...args: unknown[]) => unknown
-export type TStoreKey<TMap, TMapKey extends keyof TMap> = TMapKey
-export type TStoreValue<TMap, TMapKey extends keyof TMap> = TMap[TMapKey]
-export type TStorePartial<TMap, TMapKey extends keyof TMap> = Partial<
-  TMap[TMapKey]
->
-
 // Constructor
-export type TStoreConstructor<TMap> = {
+type MapStoreConstructor<TMap> = {
   name?: string // For devtools, if set it will activate the devtools
   initialMap?: Map<keyof TMap, TMap[keyof TMap]>
   fallbackValue?: TMap[keyof TMap]
   devtools?: boolean
   type?: 'map' | 'object'
 }
-
 // Nested
 type Primitive = string | number | boolean | null | undefined
 type PathImpl<T, K extends keyof T> = K extends string
@@ -83,7 +74,7 @@ export class CreateStore<TMap> {
 
   // Constructor
 
-  constructor(props?: TStoreConstructor<TMap>) {
+  constructor(props?: MapStoreConstructor<TMap>) {
     this.map = props?.initialMap || new Map()
     this.fallbackValue = props?.fallbackValue
     this.initialState = new Map(this.map)
