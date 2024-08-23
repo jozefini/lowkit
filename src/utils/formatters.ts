@@ -1,10 +1,10 @@
-export type TExtractKeys<S extends string> =
+type ExtractKeys<S extends string> =
   S extends `${string}{{${infer K}}}${infer Rest}`
-    ? K | TExtractKeys<Rest>
+    ? K | ExtractKeys<Rest>
     : never
 
-export type TReplacerKeys<S extends string> =
-  TExtractKeys<S> extends infer K
+type ReplacerKeys<S extends string> =
+  ExtractKeys<S> extends infer K
     ? K extends string
       ? Record<K, string | number> & Record<string, string | number>
       : never
@@ -12,7 +12,7 @@ export type TReplacerKeys<S extends string> =
 
 export const strReplacer = <S extends string>(
   value: S,
-  mappedReplacer: TReplacerKeys<S>
+  mappedReplacer: ReplacerKeys<S>
 ): string => {
   const prefix = '{{'
   const suffix = '}}'
