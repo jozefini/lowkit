@@ -1,7 +1,7 @@
 {
-  "name": "@codesync/react",
+  "name": "appcode",
   "license": "MIT",
-  "version": "2.2.8",
+  "version": "1.0.1",
   "description": "React components and hooks",
   "publishConfig": {
     "access": "public"
