@@ -1,16 +1,15 @@
-type EventEl = MediaQueryList | Element
-
-export type TElementEvent = (
-  el: EventEl,
+type EventElement = MediaQueryList | Element
+type EventCallback = (
+  el: EventElement,
   event: string,
   handler: EventListener
 ) => void
 
-export const on: TElementEvent = (el, event, handler) => {
+export const on: EventCallback = (el, event, handler) => {
   return el?.addEventListener(event, handler)
 }
 
-export const off: TElementEvent = (el, event, handler) => {
+export const off: EventCallback = (el, event, handler) => {
   return el?.removeEventListener(event, handler)
 }
 
