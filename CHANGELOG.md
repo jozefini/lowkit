@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.4
+
+### Patch Changes
+
+- add generate secret
+
 ## 1.0.3
 
 ### Patch Changes
