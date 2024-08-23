@@ -1,4 +1,4 @@
-'use server'
+'server only'
 
 export class Crypto {
   private secretKey: string
@@ -27,12 +27,6 @@ export class Crypto {
     this.ivLength = options.ivLength || 12
   }
 
-  private isBrowser() {
-    if (typeof window === 'undefined') {
-      return false
-    }
-  }
-
   private str2ab(str: string): ArrayBuffer {
     const buf = new ArrayBuffer(str.length)
     const bufView = new Uint8Array(buf)
@@ -46,9 +40,9 @@ export class Crypto {
     return String.fromCharCode.apply(null, Array.from(new Uint8Array(buf)))
   }
 
-  private async generateKey(password: string): Promise<CryptoKey> {
+  private async generateKey(): Promise<CryptoKey> {
     const encoder = new TextEncoder()
-    const data = encoder.encode(password)
+    const data = encoder.encode(this.secretKey)
     const hash = await crypto.subtle.digest(this.hashAlgorithm, data)
     return crypto.subtle.importKey(
       'raw',
@@ -59,12 +53,11 @@ export class Crypto {
     )
   }
 
-  async encrypt<T>(data: T, password?: string): Promise<string> {
+  async encrypt<T = string>(data: T): Promise<string> {
     if (typeof window !== 'undefined') {
       return Promise.reject(new Error(this.badEnvError))
     }
-    const secret = password || this.secretKey
-    const key = await this.generateKey(secret)
+    const key = await this.generateKey()
     const encoder = new TextEncoder()
     const encodedData = encoder.encode(JSON.stringify(data))
     const iv = crypto.getRandomValues(new Uint8Array(this.ivLength))
@@ -83,12 +76,11 @@ export class Crypto {
     return btoa(this.ab2str(buf.buffer))
   }
 
-  async decrypt<T>(encryptedData: string, password?: string): Promise<T> {
+  async decrypt<T = string>(encryptedData: string): Promise<T> {
     if (typeof window !== 'undefined') {
       return Promise.reject(new Error(this.badEnvError))
     }
-    const secret = password || this.secretKey
-    const key = await this.generateKey(secret)
+    const key = await this.generateKey()
     const encryptedDataBuf = this.str2ab(atob(encryptedData))
     const iv = encryptedDataBuf.slice(0, this.ivLength)
     const data = encryptedDataBuf.slice(this.ivLength)

@@ -2,11 +2,11 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
-    store: 'src/store/index.ts',
-    hooks: 'src/hooks/index.ts',
-    logger: 'src/logger/index.ts',
-    crypto: 'src/crypto/index.ts',
-    utils: 'src/utils/index.ts',
+    store: 'src/store/index.ts', // 'package/store'
+    hooks: 'src/hooks/index.ts', // 'package/hooks'
+    logger: 'src/logger/index.ts', // 'package/logger'
+    crypto: 'src/crypto/index.ts', // 'package/crypto'
+    utils: 'src/utils/index.ts', // 'package/utils'
   },
   splitting: false,
   sourcemap: true,
