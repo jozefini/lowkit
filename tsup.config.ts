@@ -2,9 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
-    index: 'src/index.tsx',
-    store: 'src/store.tsx',
-    loop: 'src/loop.tsx',
+    store: 'src/store/index.ts',
   },
   splitting: false,
   sourcemap: true,
@@ -12,5 +10,5 @@ export default defineConfig({
   clean: false,
   dts: true,
   outDir: './',
-  external: ['react', 'react-dom'],
+  external: ['react'],
 })
