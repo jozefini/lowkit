@@ -5,6 +5,7 @@ export default defineConfig({
     store: 'src/store/index.ts',
     hooks: 'src/hooks/index.ts',
     logger: 'src/logger/index.ts',
+    crypto: 'src/crypto/index.ts',
   },
   splitting: false,
   sourcemap: true,

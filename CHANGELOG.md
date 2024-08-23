@@ -1,5 +1,11 @@
 # @codesync/react
 
+## 2.2.6
+
+### Patch Changes
+
+- build crypto
+
 ## 2.2.5
 
 ### Patch Changes
