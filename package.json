@@ -1,7 +1,7 @@
 {
   "name": "lowkit",
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React components and hooks",
   "publishConfig": {
     "access": "public"
@@ -12,10 +12,10 @@
   ],
   "author": "Jozefini",
   "repository": {
-    "url": "git+https://github.com/jozefini/react.git"
+    "url": "git+https://github.com/jozefini/lowkit.git"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "sideEffects": false,
   "scripts": {
     "build": "tsup",
@@ -35,7 +35,7 @@
     "typescript": "^5.3.3"
   },
   "bugs": {
-    "url": "https://github.com/jozefini/react/issues"
+    "url": "https://github.com/jozefini/lowkit/issues"
   },
-  "homepage": "https://github.com/jozefini/react#readme"
+  "homepage": "https://github.com/jozefini/lowkit#readme"
 }
