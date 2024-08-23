@@ -1,7 +1,7 @@
 {
-  "name": "jozef",
+  "name": "firecode",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React components and hooks",
   "publishConfig": {
     "access": "public"
