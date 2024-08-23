@@ -12,4 +12,5 @@ export default defineConfig({
   dts: true,
   outDir: './',
   external: ['react'],
+  format: ['esm', 'cjs'], // Add this line to output both ES modules and CommonJS
 })
