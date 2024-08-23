@@ -1,5 +1,11 @@
 # @codesync/react
 
+## 2.2.8
+
+### Patch Changes
+
+- add utils
+
 ## 2.2.7
 
 ### Patch Changes

@@ -6,6 +6,7 @@ export default defineConfig({
     hooks: 'src/hooks/index.ts',
     logger: 'src/logger/index.ts',
     crypto: 'src/crypto/index.ts',
+    utils: 'src/utils/index.ts',
   },
   splitting: false,
   sourcemap: true,
