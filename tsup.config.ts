@@ -9,7 +9,7 @@ export default defineConfig({
     'crypto/generate': 'src/crypto/generate.ts',
     utils: 'src/utils/index.ts',
     auth: 'src/auth/client.tsx',
-    'auth/server': 'src/auth/session.ts',
+    'auth/server': 'src/auth/server.ts',
   },
   splitting: false,
   sourcemap: true,

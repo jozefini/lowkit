@@ -21,7 +21,7 @@ type ConstructorProps = {
   cookieName?: string
 }
 
-export class CreateClientSession<UserData> {
+export class CreateClientAuth<UserData> {
   private sessionContext: React.Context<Session<UserData>>
   private store: CreateStore<Session<UserData>>
   private cookieName: string
@@ -58,12 +58,12 @@ export class CreateClientSession<UserData> {
     return token ? { user, token } : value
   }
 
-  public updateSession(user: UserData | null, token: string | null): void {
+  private updateSession(user: UserData | null, token: string | null): void {
     this.store.set('user', user)
     this.store.set('token', token)
   }
 
-  public hasSessionChanged(): boolean {
+  private hasSessionChanged(): boolean {
     const currentExpire = this.getCookieExpireTime()
     if (currentExpire !== this.initialCookieExpire) {
       this.initialCookieExpire = currentExpire
@@ -87,7 +87,7 @@ export class CreateClientSession<UserData> {
     if (parts.length === 2) return parts.pop()?.split(';').shift()
   }
 
-  public AuthClient({
+  public Provider({
     user,
     token,
     validate,

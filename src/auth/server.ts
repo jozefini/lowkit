@@ -19,7 +19,7 @@ type ConstructorProps = {
   }
 }
 
-export class CreateServerSession<UserData> {
+export class CreateServerAuth<UserData> {
   private tokenNameSuffix = '_key'
   private crypto: Crypto
   private userCookieName: string
