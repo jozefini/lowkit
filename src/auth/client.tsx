@@ -7,7 +7,7 @@ import {
   useEffect,
   useLayoutEffect,
 } from 'react'
-import { CreateStore } from '../store'
+import { createStore } from '../store'
 import { useRouter } from 'next/navigation'
 
 type Session<UserData> = {
@@ -23,7 +23,7 @@ type ConstructorProps = {
 
 export class CreateClientAuth<UserData> {
   private sessionContext: React.Context<Session<UserData>>
-  private store: CreateStore<Session<UserData>>
+  private store: ReturnType<typeof createStore<Session<UserData>>>
   private cookieName: string
   private initialCookieExpire: number
 
@@ -32,7 +32,7 @@ export class CreateClientAuth<UserData> {
     this.sessionContext = SessionContext<UserData>()
     this.cookieName = cookieName ?? 'session'
     this.initialCookieExpire = this.getCookieExpireTime()
-    this.store = new CreateStore<Session<UserData>>({
+    this.store = createStore<Session<UserData>>({
       devtools: true,
       name: 'AuthStore',
       initialMap: new Map([

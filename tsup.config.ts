@@ -8,8 +8,8 @@ export default defineConfig({
     crypto: 'src/crypto/index.ts',
     'crypto/generate': 'src/crypto/generate.ts',
     utils: 'src/utils/index.ts',
-    auth: 'src/auth/client.tsx',
-    'auth/server': 'src/auth/server.ts',
+    // auth: 'src/auth/client.tsx',
+    // 'auth/server': 'src/auth/server.ts',
   },
   splitting: false,
   sourcemap: true,
@@ -17,6 +17,6 @@ export default defineConfig({
   clean: false,
   dts: true,
   outDir: './',
-  external: ['react', 'next'],
+  external: ['react'],
   format: ['esm', 'cjs'], // Add this line to output both ES modules and CommonJS
 })

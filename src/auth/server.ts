@@ -1,6 +1,6 @@
 'server only'
 
-import { Crypto } from '../crypto'
+import { createCrypto } from '../crypto'
 import { cookies } from 'next/headers'
 
 type CookieOptions = {
@@ -21,7 +21,7 @@ type ConstructorProps = {
 
 export class CreateServerAuth<UserData> {
   private tokenNameSuffix = '_key'
-  private crypto: Crypto
+  private crypto: ReturnType<typeof createCrypto>
   private userCookieName: string
   private tokenCookieName: string
   private cookieOptions: {
@@ -31,7 +31,7 @@ export class CreateServerAuth<UserData> {
 
   constructor(props: ConstructorProps) {
     const { secretKey, cookieName, cookieOptions } = props || {}
-    this.crypto = new Crypto({ secretKey })
+    this.crypto = createCrypto({ secretKey })
     this.userCookieName = cookieName || 'session'
     this.tokenCookieName = `${this.userCookieName}${this.tokenNameSuffix}`
     this.cookieOptions = {
