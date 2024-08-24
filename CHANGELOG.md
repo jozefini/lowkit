@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.5
+
+### Patch Changes
+
+- add next auth
+
 ## 1.0.4
 
 ### Patch Changes
