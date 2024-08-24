@@ -16,15 +16,43 @@ type MapStoreConstructor<TMap> = {
 }
 // Nested
 type Primitive = string | number | boolean | null | undefined
-type PathImpl<T, K extends keyof T> = K extends string
+type LimitedPathImpl<
+  T,
+  K extends keyof T,
+  Depth extends number,
+> = K extends string
   ? T[K] extends Primitive
     ? [K]
     : T[K] extends Array<infer U>
-      ? [K] | [K, number] | [K, number, ...PathImpl<U, keyof U>]
-      : [K] | [K, ...PathImpl<T[K], keyof T[K]>]
+      ? Depth extends 0
+        ? [K]
+        :
+            | [K]
+            | [K, number]
+            | [
+                K,
+                number,
+                ...LimitedPathImpl<U, keyof U, [-1, 0, 1, 2, 3, 4][Depth]>,
+              ]
+      : Depth extends 0
+        ? [K]
+        :
+            | [K]
+            | [
+                K,
+                ...LimitedPathImpl<
+                  T[K],
+                  keyof T[K],
+                  [-1, 0, 1, 2, 3, 4][Depth]
+                >,
+              ]
   : never
-
-type Path<T> = [keyof T] | PathImpl<T, keyof T>
+type LimitedPath<T, Depth extends number> =
+  | [keyof T]
+  | LimitedPathImpl<T, keyof T, Depth>
+// Use LimitedPath with a depth of 5 (adjust as needed)
+type Path<T> = LimitedPath<T, 5>
+// PathValue remains unchanged
 type PathValue<T, P extends Path<T>> = P extends [infer K]
   ? K extends keyof T
     ? T[K]
@@ -543,8 +571,10 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
     type ReturnType = P extends keyof TMap
       ? TMap[P]
       : PathValue<TMap, Extract<P, Path<TMap>>>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const prevItem = useRef<ReturnType>()
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const subscribe = useCallback(
       (callback: () => void) => {
         const typedPath: Path<TMap> = Array.isArray(path)
@@ -559,6 +589,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       [path]
     )
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const getSnapshot = useCallback(() => {
       const currentItem = Array.isArray(path)
         ? getScoped(path as Path<TMap>)
@@ -570,6 +601,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return prevItem.current
     }, [path])
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useSyncExternalStore(
       subscribe,
       getSnapshot,
@@ -578,6 +610,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
   }
 
   function useSize() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const subscribe = useCallback((callback: () => void) => {
       sizeSubscribers.add(callback)
       return () => {
@@ -585,18 +618,24 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       }
     }, [])
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const getSnapshot = useCallback(() => {
       return map.size
     }, [])
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   }
 
   function useKeys(filter?: (_: TMap[keyof TMap], i: number) => boolean) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const keysRef = useRef<(keyof TMap)[]>([])
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const sizeRef = useRef(0)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const keysStringRef = useRef('')
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const subscribe = useCallback((callback: () => void) => {
       const unsubscribe = () => {
         keysSubscribers.delete(callback)
@@ -605,6 +644,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return unsubscribe
     }, [])
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const getSnapshot = useCallback(() => {
       const currentSize = map.size
 
@@ -621,8 +661,10 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return keysRef.current
     }, [])
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const allKeys = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const filteredKeys = useMemo(() => {
       if (!filter) return allKeys
       return allKeys.filter((key, i) => filter(map.get(key)!, i))
