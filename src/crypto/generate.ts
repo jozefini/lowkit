@@ -1,24 +1,22 @@
-const generateSecretKey = (length = 32) => {
-  const charset = {
+type CharsetKey = 'uppercase' | 'lowercase' | 'numbers' | 'symbols'
+
+const generateSecretKey = (length = 32): string => {
+  const charset: Record<CharsetKey, string> = {
     uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     lowercase: 'abcdefghijklmnopqrstuvwxyz',
     numbers: '0123456789',
     symbols: '!@#$%^&*()_+[]{}|;:,.<>?',
   }
-
   const allChars = Object.values(charset).join('')
   let password = ''
-
   // Ensure at least one character from each set
   for (const set of Object.values(charset)) {
     password += set[Math.floor(Math.random() * set.length)]
   }
-
   // Fill the rest of the password
   for (let i = password.length; i < length; i++) {
     password += allChars[Math.floor(Math.random() * allChars.length)]
   }
-
   // Shuffle the password
   return password
     .split('')
@@ -35,7 +33,7 @@ const TextColor = {
   Magenta: '35',
   Cyan: '36',
   White: '37',
-}
+} as const
 
 const TextStyle = {
   Reset: '0',
@@ -46,27 +44,31 @@ const TextStyle = {
   Blink: '5',
   Reverse: '7',
   Hidden: '8',
+} as const
+
+type TextColorKey = keyof typeof TextColor
+type TextStyleKey = keyof typeof TextStyle
+
+interface StyleOptions {
+  color?: TextColorKey
+  background?: TextColorKey
+  styles?: TextStyleKey[]
 }
 
-const styleText = (text: string, options: any) => {
-  const codes = []
-
+const styleText = (text: string, options: StyleOptions): string => {
+  const codes: string[] = []
   if (options.color) {
-    codes.push(options.color)
+    codes.push(TextColor[options.color])
   }
-
   if (options.background) {
-    codes.push(options.background)
+    codes.push((Number.parseInt(TextColor[options.background]) + 10).toString())
   }
-
   if (options.styles) {
-    codes.push(...options.styles)
+    codes.push(...options.styles.map((style) => TextStyle[style]))
   }
-
   if (codes.length === 0) {
     return text
   }
-
   const styleCode = codes.join(';')
   return `\x1b[${styleCode}m${text}\x1b[0m`
 }
@@ -74,9 +76,9 @@ const styleText = (text: string, options: any) => {
 const logStyled = (
   label: string,
   value: string,
-  labelStyle: any,
-  valueStyle: any
-) => {
+  labelStyle: StyleOptions,
+  valueStyle: StyleOptions
+): void => {
   console.log(`${styleText(label, labelStyle)} ${styleText(value, valueStyle)}`)
 }
 
@@ -84,6 +86,6 @@ const logStyled = (
 logStyled(
   'GENERATED SECRET KEY =',
   generateSecretKey(),
-  { color: TextColor.White },
-  { color: TextColor.Green, styles: [TextStyle.Bold] }
+  { color: 'White' },
+  { color: 'Green', styles: ['Bold'] }
 )

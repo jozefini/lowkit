@@ -95,6 +95,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
   const type: 'map' | 'object' = props?.type || 'map'
   const initialState = new Map(map)
   const pathCache = new Map<keyof TMap | Path<TMap>, string[]>()
+  // biome-ignore lint/suspicious/noExplicitAny: <no better type>
   const nestedFallbackValueCache = new Map<string, any>()
   const itemSubscriberPaths = new Set<string>()
   const devtoolsStateCache = new Map<keyof TMap, TMap[keyof TMap]>()
@@ -157,6 +158,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
 
   function getFallbackValue<K extends keyof TMap>(key: K): TMap[K] {
     if (type === 'object' && fallbackValue) {
+      // biome-ignore lint/suspicious/noExplicitAny: <no better type>
       return (fallbackValue as any)[key] ?? (fallbackValue as TMap[K])
     }
     return fallbackValue as TMap[K]
@@ -174,6 +176,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return undefined as PathValue<TMap, P>
     }
 
+    // biome-ignore lint/suspicious/noExplicitAny: <no better type>
     let fallbackValueResult: any = fallbackValue
 
     for (let i = 1; i < path.length; i++) {
@@ -349,14 +352,17 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       ? PathValue<TMap, K>
       : never {
     if (Array.isArray(key)) {
+      // biome-ignore lint/suspicious/noExplicitAny: <no better type>
       return getScoped(key as Path<TMap>) as any
     }
     return (
+      // biome-ignore lint/suspicious/noExplicitAny: <no better type>
       map.get(key as keyof TMap) ?? (getFallbackValue(key as keyof TMap) as any)
     )
   }
 
   function getScoped<P extends Path<TMap>>(path: P): PathValue<TMap, P> {
+    // biome-ignore lint/suspicious/noExplicitAny: <no better type>
     let value: any = map.get(path[0] as keyof TMap)
 
     if (value === undefined) {
@@ -412,6 +418,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
         return
       }
 
+      // biome-ignore lint/suspicious/noExplicitAny: <no better type>
       let current: any = existingData
       for (let i = 1; i < pathArray.length - 1; i++) {
         if (current[pathArray[i]] === undefined) {
@@ -479,11 +486,14 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return
     }
 
+    // biome-ignore lint/suspicious/noExplicitAny: <no better type>
     const data = map.get(topLevelKey) as any
+    // biome-ignore lint/suspicious/noExplicitAny: <no better type>
     let updatedItem: any
 
     if (pathArray.length === 1) {
       if (typeof item === 'function') {
+        // biome-ignore lint/suspicious/noExplicitAny: <no better type>
         updatedItem = (item as (prev: any) => any)(data)
       } else if (
         typeof item === 'object' &&
@@ -506,6 +516,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       }
       const lastKey = pathArray[pathArray.length - 1] as keyof typeof current
       if (typeof item === 'function') {
+        // biome-ignore lint/suspicious/noExplicitAny: <no better type>
         current[lastKey] = (item as (prev: any) => any)(current[lastKey])
       } else if (
         typeof item === 'object' &&
@@ -540,6 +551,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       if (Object.prototype.hasOwnProperty.call(updates, key)) {
         const updateItem = updates[key as TMapKey]
         if (updateItem !== undefined) {
+          // biome-ignore lint/suspicious/noExplicitAny: <no better type>
           update(key as keyof TMap, updateItem as any, false)
           updatedKeys.add(key as TMapKey)
         }
