@@ -106,7 +106,10 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       itemSubscribers.set(pathString, new Set())
       itemSubscriberPaths.add(pathString)
     }
-    itemSubscribers.get(pathString)!.add(callback)
+    const subscribers = itemSubscribers.get(pathString)
+    if (subscribers) {
+      subscribers.add(callback)
+    }
   }
 
   function removeSubscriber(path: Path<TMap>, callback: () => void) {
@@ -278,7 +281,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
     const batch = new Set<() => void>()
 
     for (const subPath of itemSubscriberPaths) {
-      if (subPath === fullPath || subPath.startsWith(fullPath + '.')) {
+      if (subPath === fullPath || subPath.startsWith(`${fullPath}.`)) {
         const callbacks = itemSubscribers.get(subPath)
         if (callbacks) {
           for (const callback of callbacks) {
@@ -309,7 +312,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
     for (const key of keys) {
       const pathString = pathToString(key)
       for (const subPath of itemSubscriberPaths) {
-        if (subPath === pathString || subPath.startsWith(pathString + '.')) {
+        if (subPath === pathString || subPath.startsWith(`${pathString}.`)) {
           const callbacks = itemSubscribers.get(subPath)
           if (callbacks) {
             for (const callback of callbacks) {
@@ -476,12 +479,12 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       return
     }
 
-    let data = map.get(topLevelKey) as any
+    const data = map.get(topLevelKey) as any
     let updatedItem: any
 
     if (pathArray.length === 1) {
       if (typeof item === 'function') {
-        updatedItem = (item as Function)(data)
+        updatedItem = (item as (prev: any) => any)(data)
       } else if (
         typeof item === 'object' &&
         item !== null &&
@@ -503,7 +506,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
       }
       const lastKey = pathArray[pathArray.length - 1] as keyof typeof current
       if (typeof item === 'function') {
-        current[lastKey] = (item as Function)(current[lastKey])
+        current[lastKey] = (item as (prev: any) => any)(current[lastKey])
       } else if (
         typeof item === 'object' &&
         item !== null &&
@@ -667,7 +670,10 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const filteredKeys = useMemo(() => {
       if (!filter) return allKeys
-      return allKeys.filter((key, i) => filter(map.get(key)!, i))
+      return allKeys.filter((key, i) => {
+        const value = map.get(key)
+        return value !== undefined && filter(value, i)
+      })
     }, [allKeys, filter])
 
     return filteredKeys
