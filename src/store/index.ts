@@ -8,9 +8,11 @@ import {
 
 // Constructor
 type MapStoreConstructor<TMap> = {
-  name?: string // For devtools, if set it will activate the devtools
-  initialMap?: Map<keyof TMap, TMap[keyof TMap]>
-  fallbackValue?: TMap[keyof TMap]
+  name?: string
+  initialMap?: TMap extends object
+    ? TMap | { [K in keyof TMap]: TMap[K] } | Map<keyof TMap, TMap[keyof TMap]>
+    : Map<keyof TMap, TMap[keyof TMap]>
+  fallbackValue?: TMap extends object ? TMap : TMap[keyof TMap]
   devtools?: boolean
   type?: 'map' | 'object'
 }
@@ -86,7 +88,24 @@ type WindowWithDevTools = Window & {
 }
 
 export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
-  let map = props?.initialMap || new Map<keyof TMap, TMap[keyof TMap]>()
+  let map: Map<keyof TMap, TMap[keyof TMap]>
+  if (props?.initialMap instanceof Map) {
+    map = props.initialMap as Map<keyof TMap, TMap[keyof TMap]>
+  } else if (
+    props?.type === 'object' &&
+    props.initialMap &&
+    typeof props.initialMap === 'object'
+  ) {
+    map = new Map(
+      Object.entries(props.initialMap).map(([key, value]) => [
+        key as keyof TMap,
+        value,
+      ])
+    ) as Map<keyof TMap, TMap[keyof TMap]>
+  } else {
+    map = new Map<keyof TMap, TMap[keyof TMap]>()
+  }
+
   const itemSubscribers = new Map<string, Set<() => void>>()
   const sizeSubscribers = new Set<() => void>()
   const keysSubscribers = new Set<() => void>()
@@ -158,8 +177,7 @@ export function createStore<TMap>(props?: MapStoreConstructor<TMap>) {
 
   function getFallbackValue<K extends keyof TMap>(key: K): TMap[K] {
     if (type === 'object' && fallbackValue) {
-      // biome-ignore lint/suspicious/noExplicitAny: <no better type>
-      return (fallbackValue as any)[key] ?? (fallbackValue as TMap[K])
+      return (fallbackValue as TMap)[key]
     }
     return fallbackValue as TMap[K]
   }

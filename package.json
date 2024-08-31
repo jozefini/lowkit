@@ -1,7 +1,7 @@
 {
   "name": "onebit",
   "license": "MIT",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "React components and hooks",
   "publishConfig": {
     "access": "public"
