@@ -2,6 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
+    actions: 'src/actions/index.ts',
     store: 'src/store/index.ts',
     hooks: 'src/hooks/index.ts',
     logger: 'src/logger/index.ts',

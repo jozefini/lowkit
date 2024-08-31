@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.10
+
+### Patch Changes
+
+- Add actions
+
 ## 1.0.9
 
 ### Patch Changes
