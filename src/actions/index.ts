@@ -2,57 +2,56 @@ type UnknownArray = unknown[]
 type ActionCallback<T extends UnknownArray = UnknownArray> = (
   ...args: T
 ) => void
+type ArgsModifier<T extends UnknownArray = UnknownArray> = (...args: T) => T
+
 type ActionItem<T extends UnknownArray = UnknownArray> = {
   id: string
   hook: string
   callback: ActionCallback<T>
   priority: number
-  args: number
-  once?: boolean
+  once: boolean
+  args?: ArgsModifier<T>
 }
 
-type AddActionFunctionWithId = <T extends UnknownArray = UnknownArray>(
+type AddActionFunctionWithId<T extends UnknownArray = UnknownArray> = (
   hookName: string,
   id: string,
   callback: ActionCallback<T>,
   priority?: number
 ) => void
 
-type AddActionFunctionWithoutId = <T extends UnknownArray = UnknownArray>(
+type AddActionFunctionWithoutId<T extends UnknownArray = UnknownArray> = (
   hookName: string,
   callback: ActionCallback<T>,
   priority?: number
 ) => void
 
-type AddActionFunction = AddActionFunctionWithId & AddActionFunctionWithoutId
+type AddActionFunction<T extends UnknownArray = UnknownArray> =
+  AddActionFunctionWithId<T> & AddActionFunctionWithoutId<T>
 
 type ActionModification<T extends UnknownArray = UnknownArray> = Partial<{
   hook: string
   callback: ActionCallback<T>
   priority: number
-  args: number
+  args: ArgsModifier<T>
 }>
 
-type ActionsInstance = {
-  addAction: AddActionFunction
-  addActionOnce: AddActionFunction
-  doAction: <T extends UnknownArray = UnknownArray>(
-    hookName: string,
-    ...args: T
-  ) => void
+type ActionsInstance<T extends UnknownArray = UnknownArray> = {
+  addAction: AddActionFunction<T>
+  addActionOnce: AddActionFunction<T>
+  doAction: (hookName: string, ...args: T) => void
   removeAction: (hookName: string, id?: string) => void
-  modifyAction: <T extends UnknownArray = UnknownArray>(
-    id: string,
-    modifications: ActionModification<T>
-  ) => boolean
+  modifyAction: (id: string, modifications: ActionModification<T>) => boolean
   resetAction: (id: string) => boolean
 }
 
-export function createActions(): ActionsInstance {
-  const actions = new Map<string, ActionItem<UnknownArray>[]>()
-  const originalActions = new Map<string, ActionItem<UnknownArray>>()
+export function createActions<
+  T extends UnknownArray = UnknownArray,
+>(): ActionsInstance<T> {
+  const actions = new Map<string, ActionItem<T>[]>()
+  const originalActions = new Map<string, ActionItem<T>>()
 
-  function addActionImpl<T extends UnknownArray>(
+  function addActionImpl(
     hookName: string,
     idOrCallback: string | ActionCallback<T>,
     callbackOrPriority?: ActionCallback<T> | number,
@@ -78,23 +77,22 @@ export function createActions(): ActionsInstance {
       hook: hookName,
       callback,
       priority,
-      args: 1,
       once,
     }
     const hookItems = actions.get(hookName) ?? []
-    hookItems.push(action as ActionItem<UnknownArray>)
+    hookItems.push(action)
     hookItems.sort((a, b) => a.priority - b.priority)
     actions.set(hookName, hookItems)
-    originalActions.set(id, { ...action } as ActionItem<UnknownArray>)
+    originalActions.set(id, { ...action })
   }
 
-  const addAction: AddActionFunction = <T extends UnknownArray = UnknownArray>(
+  const addAction: AddActionFunction<T> = (
     hookName: string,
     idOrCallback: string | ActionCallback<T>,
     callbackOrPriority?: ActionCallback<T> | number,
     priorityOrUndefined?: number
   ) => {
-    addActionImpl<T>(
+    addActionImpl(
       hookName,
       idOrCallback,
       callbackOrPriority,
@@ -103,15 +101,13 @@ export function createActions(): ActionsInstance {
     )
   }
 
-  const addActionOnce: AddActionFunction = <
-    T extends UnknownArray = UnknownArray,
-  >(
+  const addActionOnce: AddActionFunction<T> = (
     hookName: string,
     idOrCallback: string | ActionCallback<T>,
     callbackOrPriority?: ActionCallback<T> | number,
     priorityOrUndefined?: number
   ) => {
-    addActionImpl<T>(
+    addActionImpl(
       hookName,
       idOrCallback,
       callbackOrPriority,
@@ -120,15 +116,13 @@ export function createActions(): ActionsInstance {
     )
   }
 
-  function doAction<T extends UnknownArray>(
-    hookName: string,
-    ...args: T
-  ): void {
+  function doAction(hookName: string, ...args: T): void {
     const hookItems = actions.get(hookName) ?? []
-    const itemsToKeep: ActionItem<UnknownArray>[] = []
+    const itemsToKeep: ActionItem<T>[] = []
 
     for (const item of hookItems) {
-      ;(item.callback as ActionCallback<T>)(...args)
+      const modifiedArgs = item.args ? item.args(...args) : args
+      item.callback(...modifiedArgs)
       if (!item.once) {
         itemsToKeep.push(item)
       }
@@ -155,17 +149,27 @@ export function createActions(): ActionsInstance {
     }
   }
 
-  const modifyAction = <T extends UnknownArray = UnknownArray>(
+  const modifyAction = (
     id: string,
     modifications: ActionModification<T>
   ): boolean => {
     for (const [hookName, hookItems] of actions) {
       const actionIndex = hookItems.findIndex((item) => item.id === id)
       if (actionIndex !== -1) {
-        const updatedAction = { ...hookItems[actionIndex], ...modifications }
-        hookItems[actionIndex] = updatedAction as ActionItem<UnknownArray>
-        actions.set(hookName, hookItems)
-        return true
+        const existingAction = hookItems[actionIndex]
+        if (existingAction) {
+          const updatedAction: ActionItem<T> = {
+            id: existingAction.id,
+            hook: modifications.hook ?? existingAction.hook,
+            callback: modifications.callback ?? existingAction.callback,
+            priority: modifications.priority ?? existingAction.priority,
+            once: existingAction.once,
+            args: modifications.args ?? existingAction.args,
+          }
+          hookItems[actionIndex] = updatedAction
+          actions.set(hookName, hookItems)
+          return true
+        }
       }
     }
     return false
