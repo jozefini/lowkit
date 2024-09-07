@@ -7,7 +7,7 @@ type TLogType = 'dev' | 'api' | 'auth' | 'security'
 type TLogLevel = 'INFO' | 'WARN' | 'ERROR' | 'AUDIT' | 'ALERT'
 
 export function createLogger(options: { dist: string }) {
-  const badEnvError = 'Cannot create Logger instance: must be server-side'
+  const badEnvError = 'Operation not permitted'
   const logBaseDir = options.dist
 
   if (typeof window !== 'undefined') {

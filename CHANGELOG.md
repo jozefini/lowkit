@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.15
+
+### Patch Changes
+
+- improve crypto security
+
 ## 1.0.14
 
 ### Patch Changes
